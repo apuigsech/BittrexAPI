@@ -30,6 +30,7 @@ import hashlib
 import json
 import urllib
 
+
 API = {
   'public' : ['getmarkets', 'getcurrencies', 'getticker', 'getmarketsummaries', 'getorderbook','getmarkethistory'],
   'market' : ['getopenorders', 'cancel', 'sellmarket', 'selllimit', 'buymarket', 'buylimit'],
@@ -37,7 +38,7 @@ API = {
 }
 
 
-class BittrexAPI:
+class BittrexAPI(object):
   def __init__(self, key, secret, simulation=False, cached=False):
     self.url = 'https://bittrex.com/api/v1.1'
     self.key = key
@@ -55,10 +56,7 @@ class BittrexAPI:
       if method in API[api]:
         break
     else:
-      api = None
-
-    if api == None:
-        return None
+      return None
 
     url = '{0}/{1}/{2}'.format(self.url, api, method)
     url += '?' + urllib.urlencode(args)
@@ -171,7 +169,7 @@ class BittrexAPI:
     return r
 
 
-def buymarket(self, market, quantity, rate=None, simulated=None):
+  def buymarket(self, market, quantity, rate=None, simulated=None):
     if simulated == None:
       simulated = self.simulated
 
@@ -203,7 +201,7 @@ def buymarket(self, market, quantity, rate=None, simulated=None):
     return r
 
 
-def sellmarket(self, market, quantity, rate=None, simulated=None):
+  def sellmarket(self, market, quantity, rate=None, simulated=None):
     if simulated == None:
       simulated = self.simulated
 
@@ -219,7 +217,7 @@ def sellmarket(self, market, quantity, rate=None, simulated=None):
     return r
 
 
-def cancel(self, uuid, simulated=None):
+  def cancel(self, uuid, simulated=None):
     if simulated == None:
       simulated = self.simulated
 
