@@ -34,8 +34,25 @@ import urllib
 API = {
   'public' : ['getmarkets', 'getcurrencies', 'getticker', 'getmarketsummaries', 'getorderbook','getmarkethistory'],
   'market' : ['getopenorders', 'cancel', 'sellmarket', 'selllimit', 'buymarket', 'buylimit'],
-  'acount' : ['getbalances', 'getbalance', 'getdepositaddress', 'withdraw'],
+  'account' : ['getbalances', 'getbalance', 'getdepositaddress', 'withdraw'],
 }
+
+class BittrexAuth(AuthBase):
+  def __init__(self, key, secret):
+    self.key = key
+    self.secret = secret
+
+  def __call__(self, r):
+    if '?' in r.url:
+      r.url += '&'
+    else:
+      r.url += '?'
+
+    r.url += 'apikey={0}&nonce={1}'.format(self.key, int(random.uniform(0,4294967296)))
+    diggest = hmac.new(self.secret, r.url, hashlib.sha512).hexdigest()
+
+    r.headers['apisign'] = diggest
+    return r
 
 
 class BittrexAPI(object):
@@ -62,10 +79,12 @@ class BittrexAPI(object):
     url += '?' + urllib.urlencode(args)
 
     res = requests.get(
-      url
+      url,
+      auth=BittrexAuth(self.key, self.secret)
     )
 
     return json.loads(res.text)
+
 
 
   def getmarkets(self, cached=None):
